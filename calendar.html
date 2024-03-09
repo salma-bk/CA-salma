@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendrier des Fêtes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f9f9f9;
+      color: #333; /* Couleur du texte par défaut */
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      color: #ff6600;
+    }
+    #calendar {
+      margin: 20px auto;
+      max-width: 400px;
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    #dateInput {
+      margin-bottom: 10px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    #holidayInfo {
+      display: none; /* Cacher initialement le bloc holidayInfo */
+      margin-top: 20px;
+      background-color: #ff6600;
+      border-radius: 5px;
+      padding: 10px;
+      color: white; /* Changer la couleur du texte en blanc */
+      font-weight: bold; /* Mettre le texte en gras */
+    }
+    #holidayInfo p {
+      margin: 5px 0;
+    }
+    button {
+      background-color: #ff6600;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #ff8533;
+    }
+  </style>
+</head>
+<body onload="checkPreviousSearch()">
+  <h1>Calendrier des Fêtes dans le Monde</h1>
+  <div id="calendar">
+    <input type="date" id="dateInput">
+    <button onclick="getHoliday()">Voir la Fête</button>
+  </div>
+  <div id="holidayInfo"></div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    let hasSearched = false;
+
+    function checkPreviousSearch() {
+      const searched = sessionStorage.getItem("searched");
+      if (searched) {
+        hasSearched = true;
+        document.getElementById("holidayInfo").style.display = "block";
+      }
+    }
+
+    function getHoliday() {
+      const date = document.getElementById("dateInput").value;
+      const selectedDate = new Date(date);
+      const year = selectedDate.getFullYear();
+      const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
+      const day = selectedDate.getDate().toString().padStart(2, '0');
+
+      const formattedDate = `${year}-${month}-${day}`;
+
+      const holidays = [
+        { date: "2024-01-01", country: "France", name: "Jour de l'An" },
+        { date: "2024-12-25", country: "France", name: "Noël" },
+        { date: "2024-07-14", country: "France", name: "Fête nationale" },
+        { date: "2024-01-26", country: "Australie", name: "Fête nationale" },
+        // Ajoutez d'autres fêtes ici
+      ];
+
+      const selectedHoliday = holidays.find(holiday => holiday.date === formattedDate);
+
+      const holidayInfo = document.getElementById("holidayInfo");
+      if (selectedHoliday) {
+        holidayInfo.style.display = "block"; // Afficher le bloc holidayInfo
+        holidayInfo.innerHTML = `<p>Date: ${selectedHoliday.date}</p><p>Pays: ${selectedHoliday.country}</p><p>Fête: ${selectedHoliday.name}</p>`;
+        showFireworks();
+        hasSearched = true;
+        sessionStorage.setItem("searched", "true");
+      } else {
+        holidayInfo.style.display = "none"; // Cacher le bloc holidayInfo
+        alert("Aucune fête trouvée pour cette date.");
+      }
+    }
+
+    function showFireworks() {
+      const fireworksContainer = document.createElement("div");
+      fireworksContainer.id = "fireworks-container";
+      fireworksContainer.style.position = "fixed";
+      fireworksContainer.style.top = "0";
+      fireworksContainer.style.right = "0";
+      fireworksContainer.style.width = "100%";
+      fireworksContainer.style.height = "100%";
+      fireworksContainer.style.zIndex = "1000";
+      document.body.appendChild(fireworksContainer);
+
+      particlesJS("fireworks-container", {
+        "particles": {
+          "number": {
+            "value": 50,
+            "density": {
+              "enable": true,
+              "value_area": 800
+            }
+          },
+          "color": {
+            "value": "#ffffff"
+          },
+          "shape": {
+            "type": "circle",
+            "stroke": {
+              "width": 0,
+              "color": "#000000"
+            }
+          },
+          "opacity": {
+            "value": 1,
+            "random": true,
+            "anim": {
+              "enable": true,
+              "speed": 1,
+              "opacity_min": 0,
+              "sync": false
+            }
+          },
+          "size": {
+            "value": 4,
+            "random": true,
+            "anim": {
+              "enable": true,
+              "speed": 3,
+              "size_min": 0.3,
+              "sync": false
+            }
+          },
+          "line_linked": {
+            "enable": false
+          },
+          "move": {
+            "enable": true,
+            "speed": 2,
+            "direction": "top-right", // Changement de direction à "top-right"
+            "random": false,
+            "straight": false,
+            "out_mode": "out",
+            "bounce": false,
+            "attract": {
+              "enable": false,
+              "rotateX": 600,
+              "rotateY": 1200
+            }
+          }
+        },
+        "interactivity": {
+          "events": {
+            "onhover": {
+              "enable": false,
+              "mode": "repulse"
+            }
+          }
+        }
+      });
+    }
+  </script>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyBMs48_c1vXxZnNjZD4o-CgnH2nDwXcwt0",
+      authDomain: "salma-calendar.firebaseapp.com",
+      projectId: "salma-calendar",
+      storageBucket: "salma-calendar.appspot.com",
+      messagingSenderId: "359323354524",
+      appId: "1:359323354524:web:6d3d2a28e2b12841507459",
+      measurementId: "G-HPPCC2RE3V"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
+</body>
+</html>
